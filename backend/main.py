@@ -16,6 +16,23 @@ models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 app.include_router(housekeeping.router)
 
+import asyncio
+import httpx
+
+@app.on_event("startup")
+async def startup_event():
+    async def keep_alive():
+        while True:
+            await asyncio.sleep(600)  # Ping every 10 minutes
+            try:
+                port = os.environ.get("PORT", "8000")
+                async with httpx.AsyncClient() as client:
+                    await client.get(f"http://localhost:{port}/api/inventory")
+            except Exception:
+                pass
+                
+    asyncio.create_task(keep_alive())
+
 # Mount static files for uploads
 app.mount("/uploads", StaticFiles(directory="backend/uploads"), name="uploads")
 
