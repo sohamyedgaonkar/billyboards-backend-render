@@ -27,7 +27,7 @@ async def startup_event():
             try:
                 port = os.environ.get("PORT", "8000")
                 async with httpx.AsyncClient() as client:
-                    await client.get(f"http://localhost:{port}/api/inventory")
+                    await client.get("https://billyboards-backend.onrender.com/api/inventory")
             except Exception:
                 pass
                 
@@ -226,7 +226,7 @@ async def create_campaign(
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(video.file, buffer)
         
-        video_url = f"http://localhost:8000/uploads/{filename}"
+        video_url = f"https://billyboards-backend.onrender.com/uploads/{filename}"
 
     location = db.query(models.Location).filter(models.Location.id == location_id).first()
     title = f"Campaign at {location.title}" if location else "New Campaign"
