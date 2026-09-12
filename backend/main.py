@@ -52,6 +52,7 @@ class LoginRequest(BaseModel):
 class LoginResponse(BaseModel):
     token: str
     user_id: int
+    id: int
     name: str
 
 # --- Endpoints ---
@@ -80,7 +81,7 @@ def register(req: RegisterRequest, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_user)
     
-    return {"token": f"mock_token_{new_user.id}", "user_id": new_user.id, "name": new_user.name}
+    return {"token": f"mock_token_{new_user.id}", "user_id": new_user.id, "id": new_user.id, "name": new_user.name}
 
 @app.post("/api/login", response_model=LoginResponse)
 def login(req: LoginRequest, db: Session = Depends(get_db)):
@@ -89,7 +90,7 @@ def login(req: LoginRequest, db: Session = Depends(get_db)):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
     # Very basic mock token
-    return {"token": f"mock_token_{user.id}", "user_id": user.id, "name": user.name}
+    return {"token": f"mock_token_{user.id}", "user_id": user.id, "id": user.id, "name": user.name}
 
 @app.get("/api/inventory")
 def get_inventory(db: Session = Depends(get_db)):
