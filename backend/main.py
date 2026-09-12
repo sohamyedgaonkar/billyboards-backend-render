@@ -34,6 +34,7 @@ async def startup_event():
     asyncio.create_task(keep_alive())
 
 # Mount static files for uploads
+os.makedirs("backend/uploads", exist_ok=True)
 app.mount("/uploads", StaticFiles(directory="backend/uploads"), name="uploads")
 
 def get_db():
