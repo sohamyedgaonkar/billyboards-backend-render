@@ -1,56 +1,44 @@
-import { useFonts } from 'expo-font';
-import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
+console.log('[DEBUG] _layout.tsx: File starts executing');
+
+import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
-import 'react-native-reanimated';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-import { useColorScheme } from '@/components/useColorScheme';
-
-export {
-  // Catch any errors thrown by the Layout component.
-  ErrorBoundary,
-} from 'expo-router';
+// ErrorBoundary removed to prevent undefined property crashes in SDK 57
 
 export const unstable_settings = {
-  // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: '(tabs)',
+  initialRouteName: 'login',
 };
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const [loaded, error] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
-
-  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
-  useEffect(() => {
-    if (error) throw error;
-  }, [error]);
+  console.log('[DEBUG] _layout.tsx: RootLayout component rendering');
 
   useEffect(() => {
-    if (loaded) {
+    console.log('[DEBUG] _layout.tsx: Forcing splash hide in 500ms');
+    setTimeout(() => {
+      console.log('[DEBUG] _layout.tsx: Calling SplashScreen.hideAsync()');
       SplashScreen.hideAsync();
-    }
-  }, [loaded]);
+    }, 500);
+  }, []);
 
-  if (!loaded) {
-    return null;
-  }
-
+  console.log('[DEBUG] _layout.tsx: Returning RootLayoutNav');
   return <RootLayoutNav />;
 }
 
 function RootLayoutNav() {
-  const colorScheme = useColorScheme();
-
+  console.log('[DEBUG] _layout.tsx: RootLayoutNav component rendering');
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: '#0A0A0A' } }}>
+        <Stack.Screen name="index" />
+        <Stack.Screen name="login" />
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="modal" options={{ presentation: 'modal', headerShown: true }} />
       </Stack>
-    </ThemeProvider>
+    </GestureHandlerRootView>
   );
 }
